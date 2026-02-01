@@ -8,6 +8,27 @@ The project is named after **Chiyo-chan from one of my favorite animes, *Azumang
 
 ---
 
+## Setup
+
+pip install -r requirements.txt
+create a .env file and add your serper api key in there
+
+---
+
+## Usage
+You will see the local hub menu:
+
+1. [Data]  Download PDFs (Industry-based Search)
+2. [RAG]   Index Downloaded PDFs to Vector DB
+3. [RAG]   Clear Vector Database (Reset)
+4. [Train] Run Knowledge Distillation & Fine-tuning
+5. [Chat]  Query your Fine-tuned Model (with RAG)
+0. Exit
+
+To use Chiy0, simply enter the number corresponding to the action you want to perform.
+
+---
+
 ##  Core Ideas
 
 Chiy0 is built around three core ideas:
