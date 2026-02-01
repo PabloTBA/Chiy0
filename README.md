@@ -1,112 +1,79 @@
-Chiy0 👧
-Chiy0 is a comprehensive LLM assistant pipeline capable of autonomous data gathering, RAG (Retrieval-Augmented Generation), and self-supervised fine-tuning.
+# 🌸 Chiy0: Hybrid Fine-Tuned + RAG LLM Assistant
 
-Named after the prodigy Chiyo-chan from Azumanga Daioh, this tool helps you "study" by scraping the web for industry-specific PDFs, organizing them into a knowledge base, and using a "Teacher" model to train a smaller, faster "Student" model on that specific domain.
+This repository contains **Chiy0**, a hybrid LLM assistant that combines **Retrieval-Augmented Generation (RAG)** with **LoRA fine-tuning via Unsloth**.
 
-🚀 Features
-Autonomous Data Collection: Uses an LLM to generate search queries and the Serper API to scrape and download relevant PDFs.
+The goal of this project is to explore a **full local knowledge pipeline** from automated document acquisition, to embedding-based retrieval, to model specialization via knowledge distillation while keeping inference fast and modular.
 
-RAG Engine: Indexes documents using ChromaDB and Ollama embeddings for context-aware retrieval.
+The project is named after **Chiyo-chan from one of my favorite animes, *Azumanga Daioh***.
 
-Knowledge Distillation Pipeline:
+---
 
-Ingestion: Converts PDFs using Docling.
+##  Core Ideas
 
-Synthetic Data Generation: A "Teacher" model (Llama 3.1 8B) analyzes text chunks and creates Q&A pairs.
+Chiy0 is built around three core ideas:
 
-Fine-Tuning: A "Student" model (Llama 3.2 3B) is fine-tuned on this synthetic data using Unsloth (LoRA).
+1. **Knowledge should be grounded** (RAG)
+2. **Models should specialize cheaply** (LoRA + distillation)
+3. **Data should be collected automatically** (PDF scraping)
 
-Interactive Chat: Query your newly fine-tuned model with RAG support.
+---
 
-🛠️ Installation
-1. Prerequisites
-Python 3.10+
+##  Document Acquisition
 
-CUDA-enabled GPU (required for Unsloth/Bitandbytes)
+Chiy0 uses the **Serper API** to search Google for relevant PDF documents based on a user’s high-level intent.  
+An LLM converts vague user input (e.g. *“semiconductor industry”*) into a concise search query, which is then used to download PDFs automatically.
 
-Ollama installed and running.
+These documents form the shared knowledge base for both RAG and fine-tuning.
 
-2. Clone and Install
-Clone the repository and install the required dependencies:
+---
 
-Bash
-pip install -r requirements.txt
-Note: You must have the nomic-embed-text model pulled in Ollama for embeddings to work:
+##  Document Processing & RAG
 
-Bash
-ollama pull nomic-embed-text
-3. Environment Setup
-You need a Serper API key to allow Chiy0 to search the web for PDFs.
+Downloaded PDFs are:
 
-Get a free API Key at serper.dev.
+1. Parsed and chunked
+2. Embedded using **Ollama (`nomic-embed-text`)**
+3. Stored in a **Chroma vector database**
 
-Create a file named .env in the root directory.
+During inference, user queries retrieve the most relevant chunks, which are injected into the model prompt to ground responses in source documents.
 
-Add your key to the file:
+---
 
-Code snippet
-SERPER_API_KEY=your_api_key_here
-📖 How to Use
-The project is controlled via a central hub. Run the main script to start:
+##  Knowledge Distillation & Fine-Tuning
 
-Bash
-python main.py
-You will be presented with the Local AI Hub Menu. Here is the recommended workflow:
+Chiy0 includes a **teacher–student distillation pipeline**:
 
-Step 1: Download Data (Option 1)
-Select Option 1.
+- A larger **teacher model** generates and evaluates Q&A pairs from document chunks
+- High-quality samples are filtered automatically
+- A smaller **student model** is fine-tuned using **LoRA** via Unsloth
 
-The system will ask what industry you are interested in (e.g., "Cybersecurity", "Cooking", "Marine Biology").
+This allows rapid domain adaptation without full model retraining.
 
-It uses an LLM to generate a smart search query.
+---
 
-It hits the Serper API, finds relevant PDFs, and downloads them to finetune_pdfs/.
+## Hybrid Inference
 
-Step 2: Index Data (Option 2)
-Select Option 2.
+At runtime, Chiy0 performs **hybrid inference**:
 
-This reads the PDFs from Step 1.
+- Retrieval from the vector database (RAG)
+- Generation using a **LoRA-fine-tuned local model**
+- Strict prompting to prevent hallucination when context is missing
 
-It splits them into chunks and embeds them into the Chroma vector database.
 
-Required for RAG to work.
+##  Implementation Notes
 
-Step 3: Train the Model (Option 4)
-Select Option 4. This is the core "Study" phase:
+- RAG and fine-tuning share the **same document source**
+- Chunk IDs are deterministic to avoid duplicate embeddings
+- Teacher self-evaluation filters low-quality synthetic data
+- LoRA keeps training lightweight and reversible
+- Prompts explicitly forbid reasoning leakage during inference
 
-Ingestion: Reads the PDFs.
+---
 
-Teacher Generation: The larger model (Llama 3.1) reads your PDFs and generates "Question & Answer" pairs, grading them for quality.
+##  Disclaimer
 
-Student Training: The smaller model (Llama 3.2) is fine-tuned using Unsloth on the high-quality Q&A pairs generated by the teacher.
+This project is for **research and educational purposes**.  
+Downloaded documents remain the property of their respective owners.
 
-The new model is saved to ./lora_model.
+---
 
-Step 4: Chat (Option 5)
-Select Option 5.
-
-This loads your fine-tuned student model.
-
-It combines it with the RAG database.
-
-You can now ask questions, and the model will answer using both its new training and the specific context from the PDFs.
-
-📂 Project Structure
-main.py: The CLI entry point for the application.
-
-PDFDownloader.py: Handles Serper API communication and file downloads.
-
-handle_database.py: Manages PDF processing, chunking, and ChromaDB indexing.
-
-Finetuner.py: Contains the KnowledgeDistiller class for synthetic data generation and Unsloth training.
-
-query_data.py: The RAG inference engine used during chat.
-
-embedding_function.py: Configuration for Ollama embeddings.
-
-⚠️ Troubleshooting
-Ollama Connection Refused: Ensure ollama serve is running in a separate terminal.
-
-CUDA/Memory Errors: This pipeline requires a GPU. If you run out of VRAM during training (Option 4), try reducing the batch_size in Finetuner.py.
-
-Serper Error: Ensure your API key is correct in the .env file and you have credits available.
