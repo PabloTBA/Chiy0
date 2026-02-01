@@ -10,7 +10,7 @@ The project is named after **Chiyo-chan from one of my favorite animes, *Azumang
 
 ## Setup
 
-pip install -r requirements.txt
+pip install -r requirements.txt\n
 create a .env file and add your serper api key in there
 
 ---
