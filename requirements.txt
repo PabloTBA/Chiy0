@@ -1,0 +1,29 @@
+# Core LLM and Fine-tuning
+unsloth
+torch
+torchvision
+torchaudio
+transformers
+trl
+peft
+accelerate
+bitsandbytes
+
+# RAG and Vector Database
+langchain
+langchain-ollama
+langchain-community
+langchain-chroma
+langchain-core
+chromadb
+
+# Document Processing and Chunking
+docling
+datasets
+pypdf
+
+# Utilities
+tqdm
+requests
+python-dotenv
+argparse
