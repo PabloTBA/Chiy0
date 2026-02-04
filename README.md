@@ -1,4 +1,4 @@
-# 🌸 Chiy0: Hybrid Fine-Tuned + RAG LLM Assistant
+#  Chiy0: Hybrid Fine-Tuned + RAG LLM Assistant
 
 This repository contains **Chiy0**, a hybrid LLM assistant that combines **Retrieval-Augmented Generation (RAG)** with **LoRA fine-tuning via Unsloth**.
 
@@ -27,6 +27,8 @@ You will see the local hub menu:
 0. Exit
 
 To use Chiy0, simply enter the number corresponding to the action you want to perform.
+To add your own pdfs to the vectorDB simply place them in the finetune_pdfs folder.
+
 
 ---
 
@@ -98,4 +100,8 @@ This project is for **research and educational purposes**.
 Downloaded documents remain the property of their respective owners.
 
 ---
+
+### Things to be added
+
+Im currently planning to add a UI for this project so that it can be used more easily.
 
